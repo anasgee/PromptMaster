@@ -17,7 +17,7 @@ const Home = () => {
 </p>
 
       <Feed  />
-
+    {/* <div>this is feed</div> */}
     </section>
     
 

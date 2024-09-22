@@ -9,21 +9,23 @@ import { useEffect,useState } from 'react'
 const Nav = () => {
 
 
-    const isUserLoggedIn  = true
+    // const isUserLoggedIn  = true
+    const {data:session} = useSession();
 
     const [providers,setProviders]= useState(null);
     const [navToggler,setNavToggler]= useState(false);
 
 
 
-
 useEffect(()=>{
-    const settingProviders = async()=>{
+
+
+    const setUpProviders = async()=>{
         const response = await getProviders();
 
         setProviders(response);
     };
-    settingProviders();
+    setUpProviders();
 
 }, []);
 // useEffect(() => {
@@ -45,13 +47,15 @@ useEffect(()=>{
             />
             <p className='logo_text'>Promptopia</p>
             </Link>
+
+            {/* {alert(providers)} */}
 {/* Desktop Navigation */}
-            <div className='hidden sm:flex gap-3 '>
+            <div className='hidden sm:flex gap-3 ' >   
         {
-isUserLoggedIn ? (
+session?.user? (
     <>
-    
-                <Link className='rounded-full bg-black text-white px-3 py-2 hover:bg-orange-500' href="/create-post">
+   
+                       <Link className='rounded-full bg-black text-white px-3 py-2 hover:bg-orange-500' href="/create-post">
                 Create Post
                 </Link>
                 <button className='border border-black bg-transparent rounded-full px-3 py-1 hover:bg-black hover:text-white' onClick={signOut}>
@@ -59,13 +63,15 @@ isUserLoggedIn ? (
                 </button>
                 <Link href="/profile">
                 <Image
-                src="/assets/images/logo.svg"
+                src={session?.user.image}
                 width={37}
                 height={37}
                 alt='alt'
+                className='rounded-full object-contain' 
                 />
                 </Link>
-            
+             
+
     </>
             
 
@@ -93,12 +99,13 @@ isUserLoggedIn ? (
 
 
 {/* Mobile Navigation */}
-<div className='flex sm:hidden'>
+<div  className='flex sm:hidden'>
 {
-    isUserLoggedIn ? (<>
+    session ?.user? (<>
+    <div >
     <Image
     alt='alt'
-    src="/assets/images/logo.svg"
+    src={session?.user.image}
     width={37}
     className='cursor-pointer'
 
@@ -123,6 +130,7 @@ isUserLoggedIn ? (
                 </button>
 
             </div>)}
+            </div>
             </>):(<>
     
         {
@@ -137,7 +145,10 @@ isUserLoggedIn ? (
                 </button>
              ))
             }
-    </>)
+           
+          
+    </>
+)
 }
 </div>
 </nav>
