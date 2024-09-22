@@ -13,7 +13,7 @@ const Home = () => {
 <span className='text-center orange_gradient'>AI Powered Prompts</span>
 </h1>
 <p className='desc text-center'>
-  Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae mollitia suscipit sapiente repellat alias maiores atque debitis, molestiae enim praesentium quas eum id nobis voluptas iusto! Molestias minima consequatur impedit doloremque sit.
+  Prompt Master, your prompt assitant. Whether you are a developer or designer or others, wanna a good prompt for helping, search here, create here and enjoy that one.
 </p>
 
       <Feed  />
