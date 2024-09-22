@@ -21,29 +21,66 @@ const PromptCardList =({data,handleTagClick})=>{
 }
 
 const Feed = () => {
-
+//input search field
   const [searchPrompt,setSearchPrompt] = useState('');
-  const [post,setPost] = useState([]);
 
+  //for timeout
+  const [searchTimeout,setSearchTimeot] = useState(null);
+
+
+  //filtered prompts
+  const [searchedPrompts,setSearchedPrompts] =useState([]);
+
+  //all prompts
+  const [allPost,setAllPost] = useState([]);
+
+
+
+  useEffect(()=>{
+    const promptData = async()=>{
+      const response = await fetch('/api/prompt');
+      const data = await response.json();
+      
+      setAllPost(data);
+      // console.log(data)
+   
+    };
+    promptData();
+  },[]);
+  
+
+
+  const filterPrompts = (searchText) => {
+
+    const regex = new RegExp(searchText , "i");
+
+   return allPost.filter((item) =>
+     { return regex.test(item.creator.username) || regex.test(item.prompt) || regex.test(item.tag)}
+    )}
+   
+  
   const handleChange =(e)=>{
+
+    clearTimeout(searchTimeout);
     setSearchPrompt(e.target.value);
+
+    setSearchTimeot(setTimeout(()=>{
+      const searchResult = filterPrompts(e.target.value);
+      setSearchedPrompts(searchResult);
+    },500))
   }
 
-useEffect(()=>{
-  const promptData = async()=>{
-    const response = await fetch('/api/prompt');
-    const data = await response.json();
-    
-    setPost(data);
-    console.log(data)
- 
-  };
-  promptData();
-},[]);
+  const handleTagClick =(tagname)=>{
+    setSearchPrompt(tagname);
+
+    const searchResult  = filterPrompts(tagname);
+    setSearchedPrompts(searchResult)
+  }
+
 
   return (
 
-    
+
     <section className='feed'>
       <form className='relative w-full flex-center'>
       <input className='p-5 w-full rounded-xl '
@@ -55,11 +92,22 @@ useEffect(()=>{
 </form>
 
 
+{
+  searchPrompt ? (
 <PromptCardList
-          data={post}
-          handleTagClick={()=>{}}
+data={searchedPrompts}
+handleTagClick={handleTagClick}
+/>
+  ):(
+<PromptCardList
+          data={allPost}
+          handleTagClick={handleTagClick}
         />
-    </section>
+
+
+  )
+}
+</section>
   )
 }
 

@@ -4,8 +4,9 @@ import Image from 'next/image';
 import { usePathname,useRouter } from 'next/navigation';
 
 
-const PromptCard = ({post,handleTagClick,editPost, deletePost}) => {
+const PromptCard = ({post,handleTagClick,handleEdit, handleDelete}) => {
   const {data:session} =useSession();
+  const router = useRouter();
   // const router = useRouter();
   const pathName =  usePathname();
   const [copied, setCopied] = useState('');
@@ -15,7 +16,12 @@ const PromptCard = ({post,handleTagClick,editPost, deletePost}) => {
     navigator.clipboard.writeText(post.prompt);
     setTimeout(()=>setCopied(false),3000);
   }
-
+const hanldeImageClick=()=>{
+  if(post.creator._id === session?.user.id ){
+    router.push('/profile');
+  }
+    router.push(`/profile/${post.creator._id}?name=${post.creator.username}`)
+}
 
 
   return (
@@ -25,6 +31,7 @@ const PromptCard = ({post,handleTagClick,editPost, deletePost}) => {
           <Image
           src={post.creator.image}
           alt='Creator Image'
+          onClick={hanldeImageClick}
           width={40}
           height={40}
           className='rounded-full object-contain'
@@ -59,14 +66,14 @@ const PromptCard = ({post,handleTagClick,editPost, deletePost}) => {
       </div>
 
 <p className='mt-3 text-gray-900 p-2 ' >{post.prompt} </p>
-<p className='text-gray-700 mt-3 p-2' onClick={()=>handleTagClick && handleTagClick(post.tag)}>{post.tag} </p>
+<p className='text-gray-700 mt-3 p-2' onClick={()=>handleTagClick && handleTagClick(post.tag)}>#{post.tag} </p>
    
     
    {
     session?.user.id === post.creator._id && pathName === '/profile' &&(
       <div className="flex justify-center gap-3">
-    <p onClick={editPost} className="text-blue-700 cursor-pointer">Edit</p>
-    <p onClick={deletePost} className="text-red-700 cursor-pointer">Delete</p>
+    <p onClick={handleEdit} className="text-blue-700 cursor-pointer">Edit</p>
+    <p onClick={handleDelete} className="text-red-700 cursor-pointer">Delete</p>
    </div>
     )
    }
