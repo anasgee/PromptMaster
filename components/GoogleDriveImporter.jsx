@@ -3,34 +3,62 @@
 import { useEffect, useState } from "react";
 import Uppy from "@uppy/core";
 import GoogleDrive from "@uppy/google-drive";
+import GoogleDrivePicker from "@uppy/google-drive-picker";
 import XHRUpload from "@uppy/xhr-upload";
 import Dashboard from "@uppy/react/dashboard";
 
 const companionUrl =
   process.env.NEXT_PUBLIC_UPPY_COMPANION_URL || "https://companion.uppy.io";
 
+const googlePickerConfig = {
+  clientId: process.env.NEXT_PUBLIC_GOOGLE_DRIVE_PICKER_CLIENT_ID,
+  apiKey: process.env.NEXT_PUBLIC_GOOGLE_DRIVE_PICKER_API_KEY,
+  appId: process.env.NEXT_PUBLIC_GOOGLE_DRIVE_PICKER_APP_ID,
+};
+
+const hasGooglePickerConfig = Boolean(
+  googlePickerConfig.clientId && googlePickerConfig.apiKey && googlePickerConfig.appId
+);
+
 const GoogleDriveImporter = ({ onImport }) => {
-  const [message, setMessage] = useState("");
-  const [uppy] = useState(() =>
-    new Uppy({
+  const [message, setMessage] = useState(
+    hasGooglePickerConfig
+      ? ""
+      : "Google Drive is using the public demo connector. Add Google Picker credentials to show your real Drive files reliably."
+  );
+  const [uppy] = useState(() => {
+    const instance = new Uppy({
       autoProceed: false,
       restrictions: {
         maxNumberOfFiles: 1,
         maxFileSize: 1024 * 1024,
       },
-    })
-      .use(GoogleDrive, {
+    });
+
+    if (hasGooglePickerConfig) {
+      instance.use(GoogleDrivePicker, {
         companionUrl,
-      })
-      .use(XHRUpload, {
-        endpoint: "/api/google-drive-import",
-        fieldName: "file",
-        formData: true,
-        method: "POST",
-        responseType: "json",
-        getResponseData: (xhr) => JSON.parse(xhr.responseText),
-      })
-  );
+        clientId: googlePickerConfig.clientId,
+        apiKey: googlePickerConfig.apiKey,
+        appId: googlePickerConfig.appId,
+      });
+    } else {
+      instance.use(GoogleDrive, {
+        companionUrl,
+      });
+    }
+
+    instance.use(XHRUpload, {
+      endpoint: "/api/google-drive-import",
+      fieldName: "file",
+      formData: true,
+      method: "POST",
+      responseType: "json",
+      getResponseData: (xhr) => JSON.parse(xhr.responseText),
+    });
+
+    return instance;
+  });
 
   useEffect(() => {
     const handleSuccess = (file, response) => {
@@ -67,7 +95,7 @@ const GoogleDriveImporter = ({ onImport }) => {
           Import prompt data
         </span>
         <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
-          Google Drive
+          {hasGooglePickerConfig ? "Google Picker" : "Google Drive"}
         </span>
       </div>
 
