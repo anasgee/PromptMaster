@@ -9,6 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@uppy/core": "^5.2.0",
+    "@uppy/dashboard": "^5.1.1",
+    "@uppy/google-drive": "^5.1.0",
+    "@uppy/react": "^5.2.0",
+    "@uppy/xhr-upload": "^5.2.0",
     "bcrypt": "^5.1.1",
     "mongodb": "^6.9.0",
     "mongoose": "^8.6.2",

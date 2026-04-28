@@ -1,4 +1,6 @@
 import "@styles/globals.css"
+import "@uppy/core/css/style.min.css"
+import "@uppy/dashboard/css/style.min.css"
 import Nav from "@components/Nav"
 import Provider from "@components/Provider"
 

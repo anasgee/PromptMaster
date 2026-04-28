@@ -1,7 +1,19 @@
+"use client";
+
 import Link from 'next/link';
-import React from 'react'
+import React, { useCallback } from 'react'
+import GoogleDriveImporter from './GoogleDriveImporter';
 
 const Form = ({ type,  post,  setPost,  submitting,  handleSubmit}) => {
+  const handleGoogleDriveImport = useCallback((importedText) => {
+    setPost((currentPost) => ({
+      ...currentPost,
+      prompt: currentPost.prompt
+        ? `${currentPost.prompt}\n\n${importedText}`
+        : importedText,
+    }));
+  }, [setPost]);
+
   return (
       <section className="w-full flex flex-start max-w-full flex-col">
         <h1 className='head_text text-left'>
@@ -25,6 +37,8 @@ const Form = ({ type,  post,  setPost,  submitting,  handleSubmit}) => {
         
         
           </label>
+
+          <GoogleDriveImporter onImport={handleGoogleDriveImport} />
 
 
           {/* Form Tag */}
